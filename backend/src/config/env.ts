@@ -13,7 +13,6 @@ const envSchema = z.object({
   REFRESH_TOKEN_SECRET: z
     .string()
     .min(10, 'REFRESH_TOKEN_SECRET must be at least 10 chars'),
-  JWT_EXPIRES_IN: z.string().default('7d'),
   BASE_URL: z.string().default('http://localhost:5000'),
 });
 

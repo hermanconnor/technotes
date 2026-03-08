@@ -51,6 +51,7 @@ export const globalErrorHandler = (
       field: issue.path.join('.'),
       message: issue.message,
     }));
+
     error = new ApiError(400, 'Validation failed', true, details);
   }
 
