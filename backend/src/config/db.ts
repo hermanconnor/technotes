@@ -12,7 +12,7 @@ mongoose.connection.on('error', (err) => {
 });
 
 mongoose.connection.on('disconnected', () => {
-  console.warn('⚠️ MongoDB disconnected. Attempting to reconnect...');
+  console.warn('⚠️ MongoDB disconnected.');
 });
 
 export const connectDB = async (): Promise<void> => {

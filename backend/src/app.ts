@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { globalErrorHandler } from './middleware/globalErrorHandler.js';
 import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 const app: Application = express();
 
@@ -16,6 +17,7 @@ app.get('/health', (req, res) => {
 
 // ROUTES
 app.use('/auth', authRoutes);
+app.use('/users', userRoutes);
 
 // GLOBAL 404 HANDLER
 app.use(notFoundHandler);
