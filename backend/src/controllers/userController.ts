@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { User } from '../models/User.js';
-import { registerSchema } from '../validation/userSchema.js';
+import { registerSchema, updateUserSchema } from '../validation/userSchema.js';
 
 export const getAllUsers = async (req: Request, res: Response) => {
   const users = await User.find()
@@ -41,4 +41,48 @@ export const register = async (req: Request, res: Response) => {
   } else {
     res.status(400).json({ message: 'Invalid user data received' });
   }
+};
+
+export const updateUser = async (req: Request, res: Response) => {
+  // 1. Validation
+  const { id, username, roles, active, password } = updateUserSchema.parse(
+    req.body,
+  );
+
+  // 2. Find the user
+  const user = await User.findById(id).exec();
+  if (!user) return res.status(404).json({ message: 'User not found' });
+
+  // 3. Duplicate Check
+  if (username && username !== user.username) {
+    const duplicate = await User.findOne({ username })
+      .collation({ locale: 'en', strength: 2 })
+      .lean()
+      .exec();
+
+    if (duplicate) {
+      return res.status(409).json({ message: 'Username already taken' });
+    }
+
+    user.username = username;
+  }
+
+  // 4. Update fields only if they are provided
+  if (roles) {
+    user.roles = roles;
+  }
+
+  if (typeof active === 'boolean') {
+    user.active = active;
+  }
+
+  if (password) {
+    // Triggers our Mongoose pre-save hook, which will hash it automatically.
+    user.password = password;
+  }
+
+  // 5. Save
+  const updatedUser = await user.save();
+
+  res.json({ message: `User ${updatedUser.username} updated successfully` });
 };

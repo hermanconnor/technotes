@@ -22,7 +22,13 @@ export const login = async (req: Request, res: Response) => {
 
   // 4. Generate Access Token (Short-lived)
   const accessToken = jwt.sign(
-    { username: user.username, roles: user.roles },
+    {
+      userInfo: {
+        id: user._id,
+        username: user.username,
+        roles: user.roles,
+      },
+    },
     env.ACCESS_TOKEN_SECRET,
     { expiresIn: '15m' },
   );
