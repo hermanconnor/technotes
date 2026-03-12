@@ -41,3 +41,9 @@ export const updateUserSchema = z
 // export const updateUserSchema = registerSchema.partial().extend({
 //   active: z.boolean().optional(),
 // });
+
+export const deleteUserSchema = z.object({
+  id: z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid User ID format',
+  }),
+});
