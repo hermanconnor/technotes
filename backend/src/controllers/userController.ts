@@ -1,6 +1,11 @@
 import type { Request, Response } from 'express';
 import { User } from '../models/User.js';
-import { registerSchema, updateUserSchema } from '../validation/userSchema.js';
+import { Note } from '../models/Note.js';
+import {
+  deleteUserSchema,
+  registerSchema,
+  updateUserSchema,
+} from '../validation/userSchema.js';
 
 export const getAllUsers = async (req: Request, res: Response) => {
   const users = await User.find()
@@ -85,4 +90,35 @@ export const updateUser = async (req: Request, res: Response) => {
   const updatedUser = await user.save();
 
   res.json({ message: `User ${updatedUser.username} updated successfully` });
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+  // 1. Validation
+  const { id } = deleteUserSchema.parse(req.body);
+
+  // 2. Prevent Self-Deletion
+  // We compare the ID from the URL/Body with the ID from the JWT
+  if (req.user?.id === id) {
+    return res
+      .status(403)
+      .json({ message: 'Admins cannot delete their own account' });
+  }
+
+  // 3. Check for assigned notes
+  const note = await Note.findOne({ user: id }).lean().exec();
+  if (note) {
+    return res.status(400).json({
+      message: 'User has assigned notes. Reassign them before deleting.',
+    });
+  }
+
+  // 4. Final Find and Delete
+  const user = await User.findById(id).exec();
+  if (!user) return res.status(404).json({ message: 'User not found' });
+
+  await user.deleteOne();
+
+  res.json({
+    message: `Username ${user.username} with ID ${user._id} deleted`,
+  });
 };
