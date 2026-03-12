@@ -30,6 +30,16 @@ const noteSchema = new Schema(
   },
 );
 
+// Case-Insensitive Unique Index
+// This prevents "Project A" and "project a" from being duplicates.
+noteSchema.index(
+  { title: 1 },
+  {
+    unique: true,
+    collation: { locale: 'en', strength: 2 },
+  },
+);
+
 // Auto-Increment Plugin
 noteSchema.plugin(AutoIncrement, {
   inc_field: 'ticket',

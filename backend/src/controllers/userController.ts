@@ -20,12 +20,12 @@ export const getAllUsers = async (req: Request, res: Response) => {
 };
 
 export const register = async (req: Request, res: Response) => {
-  // 1. Validate the request body
+  // 1. Validate (Throws ZodError if fails)
   const { username, password, roles } = registerSchema.parse(req.body);
 
-  // 2. Check for existing user (prevent duplicates)
+  // 2. Check for existing user
   const duplicate = await User.findOne({ username })
-    .collation({ locale: 'en', strength: 2 }) // Case-insensitive check
+    .collation({ locale: 'en', strength: 2 })
     .lean()
     .exec();
 
@@ -33,17 +33,15 @@ export const register = async (req: Request, res: Response) => {
     return res.status(409).json({ message: 'Username already exists' });
   }
 
-  // 3. Create and store new user
-  // Password will be hashed by the pre-save hook in the User model
+  // 3. Create (Throws MongooseError if fails)
   const user = await User.create({ username, password, roles });
 
-  if (user) {
-    res
-      .status(201)
-      .json({ message: `New user ${username} created`, id: user._id });
-  } else {
-    res.status(400).json({ message: 'Invalid user data received' });
-  }
+  // 4. Success Response
+  // We only reach this line if Create was successful.
+  res.status(201).json({
+    message: `New user ${username} created`,
+    id: user._id,
+  });
 };
 
 export const updateUser = async (req: Request, res: Response) => {
