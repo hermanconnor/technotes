@@ -1,9 +1,12 @@
 import { z } from 'zod';
 import { Types } from 'mongoose';
 
-const objectIdSchema = z.string().refine((val) => Types.ObjectId.isValid(val), {
-  message: 'Invalid ID format',
-});
+const objectIdSchema = z
+  .string()
+  .refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid ID format',
+  })
+  .transform((val) => new Types.ObjectId(val));
 
 export const noteSchema = z.object({
   user: objectIdSchema,
