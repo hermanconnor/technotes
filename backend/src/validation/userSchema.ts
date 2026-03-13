@@ -1,6 +1,13 @@
 import { Types } from 'mongoose';
 import { z } from 'zod';
 
+const objectIdSchema = z
+  .string()
+  .refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid User ID format',
+  })
+  .transform((val) => new Types.ObjectId(val));
+
 export const registerSchema = z.object({
   username: z
     .string({ error: 'Username is required' })
@@ -18,9 +25,7 @@ export const registerSchema = z.object({
 
 export const updateUserSchema = z
   .object({
-    id: z.string().refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid User ID format',
-    }),
+    id: objectIdSchema,
     username: z
       .string()
       .trim()
@@ -43,7 +48,5 @@ export const updateUserSchema = z
 // });
 
 export const deleteUserSchema = z.object({
-  id: z.string().refine((val) => Types.ObjectId.isValid(val), {
-    message: 'Invalid User ID format',
-  }),
+  id: objectIdSchema,
 });

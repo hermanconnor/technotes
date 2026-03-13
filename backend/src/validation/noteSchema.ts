@@ -43,3 +43,29 @@ export const updateNoteSchema = z
 export const deleteNoteSchema = z.object({
   id: objectIdSchema,
 });
+
+export const noteQuerySchema = z.object({
+  search: z.string().optional(),
+
+  sort: z
+    .enum([
+      'createdAt',
+      '-createdAt',
+      'ticket',
+      '-ticket',
+      'completed',
+      '-completed',
+      'title',
+      '-title',
+    ])
+    .default('-createdAt')
+    .transform((val) => val.split(',').join(' ')),
+
+  completed: z
+    .enum(['true', 'false'])
+    .transform((val) => val === 'true')
+    .optional(),
+
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(10),
+});
