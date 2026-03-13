@@ -39,3 +39,7 @@ export const updateNoteSchema = z
       message: 'At least one field must be provided for update',
     },
   );
+
+export const deleteNoteSchema = z.object({
+  id: objectIdSchema,
+});

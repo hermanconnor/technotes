@@ -1,7 +1,11 @@
 import type { Request, Response } from 'express';
 import { Note } from '../models/Note.js';
 import { User } from '../models/User.js';
-import { noteSchema, updateNoteSchema } from '../validation/noteSchema.js';
+import {
+  deleteNoteSchema,
+  noteSchema,
+  updateNoteSchema,
+} from '../validation/noteSchema.js';
 
 export const getAllNotes = async (req: Request, res: Response) => {
   // 1. Fetch all notes
@@ -93,5 +97,25 @@ export const updateNote = async (req: Request, res: Response) => {
   return res.status(200).json({
     message: `Note '${updatedNote.title}' updated`,
     note: updatedNote,
+  });
+};
+
+export const deleteNote = async (req: Request, res: Response) => {
+  // 1. Validation
+  const { id } = deleteNoteSchema.parse(req.body);
+
+  // 2. Find the note
+  const note = await Note.findById(id).exec();
+
+  if (!note) return res.status(404).json({ message: 'Note not found' });
+
+  // 3. Delete the note
+  await note.deleteOne();
+
+  // 4. Response
+  // Note: Even though the document is deleted from the DB,
+  // the 'note' object still exists in JS memory so we can access title/id.
+  return res.status(200).json({
+    message: `Note '${note.title}' with ID ${id} deleted`,
   });
 };
