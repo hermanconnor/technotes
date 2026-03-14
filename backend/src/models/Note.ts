@@ -1,5 +1,5 @@
-import mongoose, { type InferSchemaType, model, Schema } from 'mongoose';
-const AutoIncrement = require('mongoose-sequence')(mongoose);
+import { type InferSchemaType, model, Schema } from 'mongoose';
+import { Counter } from './Counter.js';
 
 const noteSchema = new Schema(
   {
@@ -24,32 +24,45 @@ const noteSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    ticket: {
+      type: Number,
+      unique: true,
+    },
   },
   {
     timestamps: true,
   },
 );
 
-// Case-Insensitive Unique Index
-// This prevents "Project A" and "project a" from being duplicates.
+// Indexes
 noteSchema.index(
   { title: 1 },
-  {
-    unique: true,
-    collation: { locale: 'en', strength: 2 },
-  },
+  { unique: true, collation: { locale: 'en', strength: 2 } },
 );
 
-// Auto-Increment Plugin
-noteSchema.plugin(AutoIncrement, {
-  inc_field: 'ticket',
-  id: 'ticketNums',
-  start_seq: 1,
+noteSchema.index({ title: 'text', text: 'text' });
+
+// --- MANUAL AUTO-INCREMENT LOGIC ---
+noteSchema.pre('save', async function () {
+  // Check if it's a new document
+  if (!this.isNew) return;
+
+  try {
+    const counter = await Counter.findByIdAndUpdate(
+      { _id: 'ticketNums' },
+      { $inc: { seq: 1 } },
+      { returnDocument: 'after', upsert: true },
+    );
+
+    // If counter is null (shouldn't happen with upsert), handle it
+    if (counter) {
+      this.ticket = counter.seq;
+    }
+  } catch (error: any) {
+    throw error;
+  }
 });
 
-// Note: Manually add 'ticket' because InferSchemaType doesn't see plugin fields
-type NoteType = InferSchemaType<typeof noteSchema> & {
-  ticket: number;
-};
+type NoteType = InferSchemaType<typeof noteSchema>;
 
 export const Note = model<NoteType>('Note', noteSchema);

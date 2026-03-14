@@ -5,25 +5,64 @@ import {
   deleteNoteSchema,
   noteSchema,
   updateNoteSchema,
+  noteQuerySchema,
 } from '../validation/noteSchema.js';
 
 export const getAllNotes = async (req: Request, res: Response) => {
-  // 1. Fetch all notes
-  const notes = await Note.find()
-    .populate<{ user: { username: string } }>('user', 'username')
-    .lean()
-    .exec();
+  // 1. Validate
+  const { search, sort, completed, page, limit } = noteQuerySchema.parse(
+    req.query,
+  );
 
-  // 2. Check if any notes exist
-  if (!notes || notes.length === 0) return res.status(200).json([]);
+  // 2. Build Query Object
+  const queryObj: any = {};
 
-  // 3. Transform data for the frontend
+  if (search) {
+    // Uses the Text Index we added to the model for better performance
+    queryObj.$text = { $search: search };
+
+    // OR keep the regex if prefer partial matching
+    // queryObj.$or = [
+    //   { title: { $regex: search, $options: 'i' } },
+    //   { text: { $regex: search, $options: 'i' } },
+    // ];
+  }
+
+  if (completed !== undefined) {
+    queryObj.completed = completed;
+  }
+
+  // 3. Execution
+  const skip = (page - 1) * limit;
+
+  const [notes, totalNotes] = await Promise.all([
+    Note.find(queryObj)
+      .sort(sort)
+      .skip(skip)
+      .limit(limit)
+      .populate<{ user: { username: string } }>('user', 'username')
+      .lean()
+      .exec(),
+    Note.countDocuments(queryObj),
+  ]);
+
+  // 4. Response
   const notesWithUser = notes.map((note) => ({
     ...note,
     username: note.user?.username || 'Deleted User',
   }));
 
-  res.status(200).json(notesWithUser);
+  res.status(200).json({
+    metadata: {
+      total: totalNotes,
+      page,
+      limit,
+      pages: Math.ceil(totalNotes / limit),
+      hasNextPage: page * limit < totalNotes,
+      hasPrevPage: page > 1,
+    },
+    data: notesWithUser,
+  });
 };
 
 export const createNote = async (req: Request, res: Response) => {
@@ -52,7 +91,7 @@ export const createNote = async (req: Request, res: Response) => {
   // 3. Create the Note
   const note = await Note.create({ user, title, text });
 
-  return res.status(201).json({
+  res.status(201).json({
     message: 'New note created',
     ticketNumber: note.ticket,
   });
@@ -94,7 +133,7 @@ export const updateNote = async (req: Request, res: Response) => {
 
   const updatedNote = await note.save();
 
-  return res.status(200).json({
+  res.status(200).json({
     message: `Note '${updatedNote.title}' updated`,
     note: updatedNote,
   });
@@ -115,7 +154,7 @@ export const deleteNote = async (req: Request, res: Response) => {
   // 4. Response
   // Note: Even though the document is deleted from the DB,
   // the 'note' object still exists in JS memory so we can access title/id.
-  return res.status(200).json({
+  res.status(200).json({
     message: `Note '${note.title}' with ID ${id} deleted`,
   });
 };

@@ -96,7 +96,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 
   // 2. Prevent Self-Deletion
   // We compare the ID from the URL/Body with the ID from the JWT
-  if (req.user?.id === id) {
+  if (req.user?.id === id.toString()) {
     return res
       .status(403)
       .json({ message: 'Admins cannot delete their own account' });
