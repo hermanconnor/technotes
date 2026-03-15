@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import { ZodError } from 'zod';
 import { ApiError, type ValidationErrorDetail } from '../utils/ApiError.js';
+import { logger } from './logger.js';
 
 interface MongoError extends Error {
   code?: number;
@@ -78,7 +79,7 @@ export const globalErrorHandler = (
   };
 
   if (process.env.NODE_ENV === 'development' || !finalError.isOperational) {
-    console.error(`[ERROR] ${req.method} ${req.url}:`, err);
+    logger.error(`[ERROR] ${req.method} ${req.url}:`, err);
   }
 
   res.status(finalError.statusCode).json(responseBody);

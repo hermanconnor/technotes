@@ -1,11 +1,12 @@
 import type { Server } from 'node:http';
 import app from './app.js';
-import { env } from './config/env.js';
 import { connectDB, disconnectDB } from './config/db.js';
+import { env } from './config/env.js';
+import { logger } from './middleware/logger.js';
 
 process.on('uncaughtException', (err: Error) => {
-  console.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
-  console.error(err.name, err.message);
+  logger.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+  logger.error(err.name, err.message);
   process.exit(1);
 });
 
@@ -18,28 +19,28 @@ const startServer = async () => {
     await connectDB();
 
     server = app.listen(env.PORT, () => {
-      console.log(`🚀 Server is running at http://localhost:${env.PORT}`);
+      logger.info(`🚀 Server is running at http://localhost:${env.PORT}`);
     });
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
+    logger.error('❌ Failed to start server:', error);
     process.exit(1);
   }
 };
 
 const gracefulShutdown = async (signal: string) => {
-  console.log(`\nCaught ${signal}. Starting graceful shutdown...`);
+  logger.info(`\nCaught ${signal}. Starting graceful shutdown...`);
 
   if (server) {
     server.close(async () => {
-      console.log('✅ HTTP server closed.');
+      logger.info('✅ HTTP server closed.');
       await disconnectDB();
-      console.log('👋 Process terminated.');
+      logger.info('👋 Process terminated.');
       process.exit(0);
     });
 
     // If graceful shutdown takes too long, force it
     setTimeout(() => {
-      console.error('⚠️ Forcefully shutting down (timeout)');
+      logger.error('⚠️ Forcefully shutting down (timeout)');
       process.exit(1);
     }, SHUTDOWN_TIMEOUT_MS).unref();
   } else {
@@ -53,8 +54,8 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 // Catch unhandled errors
 process.on('unhandledRejection', (err: Error) => {
-  console.error('UNHANDLED REJECTION! 💥 Shutting down...');
-  console.error(err.name, err.message);
+  logger.error('UNHANDLED REJECTION! 💥 Shutting down...');
+  logger.error(err.name, err.message);
 
   gracefulShutdown('unhandledRejection');
 });

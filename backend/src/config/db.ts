@@ -1,18 +1,19 @@
 import mongoose from 'mongoose';
 import { env } from './env.js';
+import { logger } from '../middleware/logger.js';
 
 mongoose.set('strictQuery', true);
 
 mongoose.connection.on('connected', () => {
-  console.log('✅ MongoDB connected to:', mongoose.connection.name);
+  logger.info('✅ MongoDB connected to:', mongoose.connection.name);
 });
 
 mongoose.connection.on('error', (err) => {
-  console.error('❌ MongoDB connection error:', err);
+  logger.error('❌ MongoDB connection error:', err);
 });
 
 mongoose.connection.on('disconnected', () => {
-  console.warn('⚠️ MongoDB disconnected.');
+  logger.warn('⚠️ MongoDB disconnected.');
 });
 
 export const connectDB = async (): Promise<void> => {
@@ -28,7 +29,7 @@ export const connectDB = async (): Promise<void> => {
       socketTimeoutMS: 45000,
     });
   } catch (error) {
-    console.error('❌ Initial MongoDB connection failed:', error);
+    logger.error('❌ Initial MongoDB connection failed:', error);
     process.exit(1);
   }
 };
@@ -38,8 +39,8 @@ export const disconnectDB = async (): Promise<void> => {
 
   try {
     await mongoose.disconnect();
-    console.log('✅ MongoDB connection closed gracefully');
+    logger.info('✅ MongoDB connection closed gracefully');
   } catch (error) {
-    console.error('❌ Error during MongoDB disconnection:', error);
+    logger.error('❌ Error during MongoDB disconnection:', error);
   }
 };
