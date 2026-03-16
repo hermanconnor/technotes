@@ -6,7 +6,7 @@ import { logger } from './middleware/logger.js';
 
 process.on('uncaughtException', (err: Error) => {
   logger.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
-  logger.error(err.name, err.message);
+  logger.error(`ERROR NAME: ${err.name}, MESSAGE: ${err.message}`);
   process.exit(1);
 });
 
@@ -22,7 +22,7 @@ const startServer = async () => {
       logger.info(`🚀 Server is running at http://localhost:${env.PORT}`);
     });
   } catch (error) {
-    logger.error('❌ Failed to start server:', error);
+    logger.error(`❌ Failed to start server: ${error}`);
     process.exit(1);
   }
 };
@@ -55,7 +55,7 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 // Catch unhandled errors
 process.on('unhandledRejection', (err: Error) => {
   logger.error('UNHANDLED REJECTION! 💥 Shutting down...');
-  logger.error(err.name, err.message);
+  logger.error(`ERROR NAME: ${err.name}, MESSAGE: ${err.message}`);
 
   gracefulShutdown('unhandledRejection');
 });
