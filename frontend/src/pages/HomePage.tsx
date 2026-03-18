@@ -1,5 +1,7 @@
 import Hero from "@/components/home/Hero";
 import Services from "@/components/home/Services";
+import Features from "@/components/home/Features";
+import Footer from "@/components/home/Footer";
 
 const HomePage = () => {
   return (
@@ -9,6 +11,8 @@ const HomePage = () => {
       {/* Services Section */}
       <Services />
       {/* Features Section */}
+      <Features />
+      <Footer />
     </>
   );
 };
