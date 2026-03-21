@@ -5,15 +5,17 @@ import {
   getAllNotes,
   updateNote,
 } from '../controllers/noteController.js';
+import { verifyJWT } from '../middleware/verifyJwt.js';
 
 const router = Router();
 
-router.get('/', getAllNotes);
+router.use(verifyJWT);
 
-router.post('/', createNote);
-
-router.patch('/', updateNote);
-
-router.delete('/', deleteNote);
+router
+  .route('/')
+  .get(getAllNotes)
+  .post(createNote)
+  .patch(updateNote)
+  .delete(deleteNote);
 
 export default router;
