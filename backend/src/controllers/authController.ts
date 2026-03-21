@@ -79,8 +79,11 @@ export const refresh = async (req: Request, res: Response) => {
     // 3. Generate a NEW Access Token
     const accessToken = jwt.sign(
       {
-        username: foundUser.username,
-        roles: foundUser.roles,
+        userInfo: {
+          id: foundUser._id,
+          username: foundUser.username,
+          roles: foundUser.roles,
+        },
       },
       env.ACCESS_TOKEN_SECRET,
       { expiresIn: '15m' },

@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { ZodError } from 'zod';
 import { ApiError, type ValidationErrorDetail } from '../utils/ApiError.js';
 import { logger } from './logger.js';
+import { env } from '../config/env.js';
 
 interface MongoError extends Error {
   code?: number;
@@ -43,7 +44,7 @@ export const globalErrorHandler = (
 
   // 3. Mongoose Cast Error
   else if (err instanceof mongoose.Error.CastError) {
-    error = new ApiError(400, `Invalid ${err.path}: ${err.value}`);
+    error = new ApiError(400, 'Resource not found');
   }
 
   // 4. Zod Validation Error
@@ -75,10 +76,10 @@ export const globalErrorHandler = (
       ? finalError.message
       : 'An unexpected error occurred',
     ...(finalError.details && { details: finalError.details }),
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    ...(env.NODE_ENV === 'development' && { stack: err.stack }),
   };
 
-  if (process.env.NODE_ENV === 'development' || !finalError.isOperational) {
+  if (env.NODE_ENV === 'development' || !finalError.isOperational) {
     logger.error(`[ERROR] ${req.method} ${req.url}:`, err);
   }
 
