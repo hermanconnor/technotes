@@ -4,6 +4,9 @@ import cors from 'cors';
 import compression from 'compression';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import swaggerUi from 'swagger-ui-express';
+
+import { swaggerSpec } from './config/swagger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { globalErrorHandler } from './middleware/globalErrorHandler.js';
 import authRoutes from './routes/authRoutes.js';
@@ -25,6 +28,9 @@ app.use(morgan('dev'));
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// API DOCUMENTATION
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // ROUTES
 app.use('/auth', authRoutes);
