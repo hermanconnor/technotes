@@ -1,6 +1,6 @@
 import type { Server } from 'node:http';
 import app from './app.js';
-import { connectDB, disconnectDB } from './config/db.js';
+import { connectDB, disconnectDB, testConnection } from './config/db.js';
 import { env } from './config/env.js';
 import { logger } from './middleware/logger.js';
 
@@ -16,7 +16,17 @@ let server: Server;
 
 const startServer = async () => {
   try {
+    logger.info('🔌 Connecting to MongoDB...');
     await connectDB();
+
+    const dbHealthy = await testConnection();
+
+    if (!dbHealthy) {
+      logger.error(
+        '❌ Database is connected but not responding to ping. Exiting...',
+      );
+      process.exit(1);
+    }
 
     server = app.listen(env.PORT, () => {
       logger.info(`🚀 Server is running at http://localhost:${env.PORT}`);

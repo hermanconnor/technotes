@@ -44,3 +44,22 @@ export const disconnectDB = async (): Promise<void> => {
     logger.error(`❌ Error during MongoDB disconnection: ${error}`);
   }
 };
+
+export const testConnection = async (): Promise<boolean> => {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return false;
+    }
+
+    // Pings the server to ensure the connection is actually responsive
+    const db = mongoose.connection.db;
+    if (!db) return false;
+
+    await db.admin().ping();
+
+    return true;
+  } catch (error) {
+    logger.error(`❌ Health check failed: ${error}`);
+    return false;
+  }
+};

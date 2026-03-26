@@ -9,6 +9,7 @@ import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { globalErrorHandler } from './middleware/globalErrorHandler.js';
+import healthRoute from './routes/healthRoute.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import noteRoutes from './routes/noteRoutes.js';
@@ -25,9 +26,7 @@ app.use(cookieParser());
 app.use(morgan('dev'));
 
 // HEALTH CHECK
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
+app.use('/health', healthRoute);
 
 // API DOCUMENTATION
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
