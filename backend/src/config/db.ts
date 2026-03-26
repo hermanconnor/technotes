@@ -16,20 +16,39 @@ mongoose.connection.on('disconnected', () => {
   logger.warn('⚠️ MongoDB disconnected.');
 });
 
-export const connectDB = async (): Promise<void> => {
-  if (mongoose.connection.readyState >= 1) return;
+const MAX_RETRIES = 5;
+const INITIAL_RETRY_DELAY = 2000; // 2 seconds
 
+export const connectDB = async (retryCount = 0): Promise<void> => {
   const mongoUri = env.MONGODB_URI;
 
   try {
+    if (mongoose.connection.readyState >= 1) return;
+
     await mongoose.connect(mongoUri, {
-      autoIndex: process.env.NODE_ENV !== 'production',
+      autoIndex: env.NODE_ENV !== 'production',
       maxPoolSize: 10,
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
     });
+
+    logger.info('✅ MongoDB connected successfully');
   } catch (error) {
-    logger.error(`❌ Initial MongoDB connection failed: ${error}`);
+    if (retryCount < MAX_RETRIES) {
+      const delay = INITIAL_RETRY_DELAY * Math.pow(2, retryCount); // Exponential backoff
+
+      logger.warn(
+        `⚠️ Connection failed. Retrying in ${delay / 1000}s... (${retryCount + 1}/${MAX_RETRIES})`,
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, delay));
+
+      return connectDB(retryCount + 1);
+    }
+
+    logger.error(
+      `❌ Maximum retries reached. Initial MongoDB connection failed: ${error}`,
+    );
     process.exit(1);
   }
 };
