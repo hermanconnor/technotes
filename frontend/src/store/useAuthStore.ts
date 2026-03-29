@@ -1,12 +1,13 @@
 import { create } from "zustand";
+import type { UserRole } from "@/lib/types";
 
 interface AuthState {
   user: string | null;
-  roles: string[];
+  roles: UserRole[];
   accessToken: string | null;
   setAuth: (auth: {
     user: string;
-    roles: string[];
+    roles: UserRole[];
     accessToken: string;
   }) => void;
   logOut: () => void;

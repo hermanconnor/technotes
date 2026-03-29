@@ -1,3 +1,5 @@
+export type UserRole = "Employee" | "Manager" | "Admin";
+
 export interface LoginCredentials {
   username: string;
   password: string;
@@ -12,7 +14,7 @@ export interface DecodedAccessToken {
   userInfo: {
     id: string;
     username: string;
-    roles: string[];
+    roles: UserRole[];
   };
   iat: number;
   exp: number;

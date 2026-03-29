@@ -92,7 +92,7 @@ export const refresh = async (req: Request, res: Response) => {
     res.json({ accessToken });
   } catch (error) {
     // This catches expired tokens, malformed tokens, or signature mismatches
-    return res.status(403).json({ message: 'Forbidden' });
+    return res.status(401).json({ message: 'Unauthorized' });
   }
 };
 
