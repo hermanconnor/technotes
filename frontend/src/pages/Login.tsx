@@ -1,26 +1,53 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Eye, EyeOff, Wrench } from "lucide-react";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { Eye, EyeOff, Wrench, Loader2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Field, FieldLabel } from "@/components/ui/field";
-import LoginBg from "@/assets/images/login-bg.webp";
+import {
+  Field,
+  FieldLabel,
+  FieldError,
+  FieldGroup,
+} from "@/components/ui/field";
+import { useLogin } from "@/hooks/useLogin";
 import { loginSchema, type LoginFormValues } from "@/validation/authSchema";
+import LoginBg from "@/assets/images/login-bg.webp";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormValues>({
+  const { mutate: login, isPending } = useLogin();
+
+  const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { persist: false },
+    defaultValues: {
+      username: "",
+      password: "",
+      persist: false,
+    },
   });
+
+  const onSubmit = (data: LoginFormValues) => {
+    login(data, {
+      onSuccess: () => {
+        toast.success("Welcome back!", { description: "Logging you in..." });
+        navigate(from, { replace: true });
+      },
+
+      onError: (error) => {
+        const message = error.response?.data?.message || "Invalid credentials";
+        toast.error("Authentication Failed", { description: message });
+      },
+    });
+  };
 
   return (
     <div className="flex min-h-screen">
@@ -78,66 +105,106 @@ const Login = () => {
             </p>
           </div>
 
-          <form className="space-y-6">
-            <Field>
-              <FieldLabel htmlFor="email">Email Address</FieldLabel>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@techfixpro.com"
-                className="h-12"
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <FieldGroup className="space-y-6">
+              {/* Username Field */}
+              <Controller
+                name="username"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="username">Username</FieldLabel>
+                    <Input
+                      {...field}
+                      id="username"
+                      placeholder="e.g. jdoe123"
+                      disabled={isPending}
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
               />
-            </Field>
 
-            <Field>
-              <FieldLabel htmlFor="password">Password</FieldLabel>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  className="h-12 pr-12"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="text-muted-foreground hover:text-foreground absolute top-1/2 right-4 -translate-y-1/2 transition-colors"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? (
-                    <EyeOff className="size-5" />
-                  ) : (
-                    <Eye className="size-5" />
+              {/* Password Field */}
+              <Controller
+                name="password"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="password">Password</FieldLabel>
+                    <div className="relative">
+                      <Input
+                        {...field}
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        disabled={isPending}
+                        className="pr-12"
+                        aria-invalid={fieldState.invalid}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="text-muted-foreground hover:text-foreground absolute top-1/2 right-4 -translate-y-1/2"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="size-5" />
+                        ) : (
+                          <Eye className="size-5" />
+                        )}
+                      </button>
+                    </div>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+
+              <div className="flex items-center justify-between">
+                <Controller
+                  name="persist"
+                  control={form.control}
+                  render={({ field }) => (
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        id="persist"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        disabled={isPending}
+                      />
+                      <label
+                        htmlFor="persist"
+                        className="text-muted-foreground cursor-pointer text-sm"
+                      >
+                        Trust this device
+                      </label>
+                    </div>
                   )}
-                </button>
-              </div>
-            </Field>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Checkbox id="remember" />
-                <label
-                  htmlFor="remember"
-                  className="text-muted-foreground cursor-pointer text-sm"
+                />
+                {/* <Link
+                  to="/forgot-password"
+                  className="text-primary text-sm hover:underline"
                 >
-                  Remember me
-                </label>
+                  Forgot password?
+                </Link> */}
               </div>
-              <Link
-                to="/forgot-password"
-                className="text-primary text-sm hover:underline"
-              >
-                Forgot password?
-              </Link>
-            </div>
 
-            <Button
-              type="submit"
-              size="lg"
-              className="h-12 w-full font-semibold"
-            >
-              Sign In
-            </Button>
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full cursor-pointer"
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                {isPending ? "Signing In..." : "Sign In"}
+              </Button>
+            </FieldGroup>
           </form>
 
           <div className="border-border mt-8 border-t pt-8">
