@@ -43,7 +43,7 @@ export const login = async (req: Request, res: Response) => {
   // 6. Secure Cookie Configuration
   res.cookie('jwt', refreshToken, {
     httpOnly: true,
-    secure: env.NODE_ENV === 'production',
+    secure: true,
     sameSite: 'none',
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
@@ -106,8 +106,8 @@ export const logout = async (req: Request, res: Response) => {
   // Note: 'secure' and 'sameSite' should match your res.cookie settings
   res.clearCookie('jwt', {
     httpOnly: true,
+    secure: true,
     sameSite: 'none',
-    secure: process.env.NODE_ENV === 'production',
   });
 
   // 3. Final response

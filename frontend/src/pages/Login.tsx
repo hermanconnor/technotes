@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { Eye, EyeOff, Wrench, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
   Field,
@@ -22,7 +21,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from?.pathname || "/dashboard";
 
   const { mutate: login, isPending } = useLogin();
 
@@ -31,7 +30,6 @@ const Login = () => {
     defaultValues: {
       username: "",
       password: "",
-      persist: false,
     },
   });
 
@@ -163,29 +161,6 @@ const Login = () => {
                   </Field>
                 )}
               />
-
-              <div className="flex items-center justify-between">
-                <Controller
-                  name="persist"
-                  control={form.control}
-                  render={({ field }) => (
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        id="persist"
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        disabled={isPending}
-                      />
-                      <label
-                        htmlFor="persist"
-                        className="text-muted-foreground cursor-pointer text-sm"
-                      >
-                        Trust this device
-                      </label>
-                    </div>
-                  )}
-                />
-              </div>
 
               <Button
                 type="submit"

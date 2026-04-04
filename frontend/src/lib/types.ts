@@ -23,3 +23,22 @@ export interface DecodedAccessToken {
 export interface ApiErrorResponse {
   message: string;
 }
+
+export interface User {
+  _id: string;
+  username: string;
+  roles: string[];
+  active: boolean;
+}
+
+export interface Note {
+  _id: string;
+  user: string;
+  username?: string;
+  title: string;
+  text: string;
+  completed: boolean;
+  ticket: number;
+  createdAt: string;
+  updatedAt: string;
+}

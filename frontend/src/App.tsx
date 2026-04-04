@@ -4,6 +4,8 @@ import Login from "./pages/Login";
 import RootLayout from "./layouts/RootLayout";
 import DashboardLayout from "./layouts/DashboardLayout";
 import DashboardPage from "./pages/DashboardPage";
+import PersistLogin from "./components/PersistLogin";
+import RequireAuth from "./components/RequireAuth";
 
 function App() {
   return (
@@ -12,8 +14,16 @@ function App() {
         <Route index element={<HomePage />} />
         <Route path="login" element={<Login />} />
 
-        <Route path="dashboard" element={<DashboardLayout />}>
-          <Route index element={<DashboardPage />} />
+        <Route element={<PersistLogin />}>
+          <Route
+            element={
+              <RequireAuth allowedRoles={["Admin", "Manager", "Employee"]} />
+            }
+          >
+            <Route path="dashboard" element={<DashboardLayout />}>
+              <Route index element={<DashboardPage />} />
+            </Route>
+          </Route>
         </Route>
       </Route>
     </Routes>

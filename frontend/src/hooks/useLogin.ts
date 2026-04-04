@@ -28,7 +28,7 @@ export const useLogin = () => {
       return response.data;
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       const { accessToken } = data;
       const decoded = jwtDecode<DecodedAccessToken>(accessToken);
 
@@ -37,8 +37,6 @@ export const useLogin = () => {
         roles: decoded.userInfo.roles,
         accessToken,
       });
-
-      localStorage.setItem("persist", JSON.stringify(variables.persist));
 
       queryClient.clear();
     },

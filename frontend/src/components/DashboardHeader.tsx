@@ -112,7 +112,7 @@ const DashboardHeader = ({ currentPage }: Props) => {
                       {user || "User"}
                     </span>
                     {roles.length > 0 && (
-                      <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+                      <span className="text-muted-foreground mt-1 text-xs uppercase">
                         {roles[0]}
                       </span>
                     )}
