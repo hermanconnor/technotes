@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNotes } from "@/hooks/useNotes";
-import { useUsers } from "@/hooks/useUsers";
 import { useAuthStore } from "@/store/useAuthStore";
 import {
   CalendarDays,
@@ -15,39 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 const DashboardPage = () => {
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
-  // const {
-  //   data: users,
-  //   isLoading: isLoadingUsers,
-  //   isError: isUserError,
-  //   error,
-  // } = useUsers();
-  // const {
-  //   data: notes,
-  //   isLoading: isLoadingNotes,
-  //   isError: isNoteError,
-  // } = useNotes();
   const { user: currentUsername, roles } = useAuthStore();
-
-  const isAdminOrManager = roles.includes("Admin") || roles.includes("Manager");
-
-  console.log(currentUsername);
-
-  // const myOpen =
-  //   notes?.filter((n) => !n.completed && n.username === currentUsername)
-  //     .length || 0;
-  // const totalEmployees = users?.length || 0;
-  // const activeEmployees = users?.filter((u) => u.active).length || 0;
-  // const totalNotes = notes?.length || 0;
-  // const openNotes = notes?.filter((n) => !n.completed).length || 0;
-  // const completedNotes = notes?.filter((n) => n.completed).length || 0;
-
-  // const stats = {
-  //   totalEmployees,
-  //   activeEmployees,
-  //   totalNotes,
-  //   openNotes,
-  //   completedNotes,
-  // };
 
   useEffect(() => {
     setCurrentTime(new Date());

@@ -42,3 +42,17 @@ export interface Note {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface PaginationMetadata {
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
+export interface PaginatedResponse<T> {
+  metadata: PaginationMetadata;
+  data: T[];
+}
