@@ -56,3 +56,10 @@ export interface PaginatedResponse<T> {
   metadata: PaginationMetadata;
   data: T[];
 }
+
+export interface DashboardStats {
+  totalNotes: number;
+  openNotes: number;
+  completedNotes: number;
+  activeEmployees: number;
+}

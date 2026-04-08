@@ -11,6 +11,7 @@ import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { globalErrorHandler } from './middleware/globalErrorHandler.js';
 import healthRoute from './routes/healthRoute.js';
 import authRoutes from './routes/authRoutes.js';
+import statsRoutes from './routes/statsRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import noteRoutes from './routes/noteRoutes.js';
 import corsOptions from './config/corsOptions.js';
@@ -33,6 +34,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // ROUTES
 app.use('/auth', authRoutes);
+app.use('/stats', statsRoutes);
 app.use('/users', userRoutes);
 app.use('/notes', noteRoutes);
 
