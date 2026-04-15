@@ -1,14 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
-import {
-  CalendarDays,
-  CheckCircle2,
-  Circle,
-  Clock,
-  FileText,
-  Users,
-} from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { CalendarDays, Clock } from "lucide-react";
+
+import DashboardStats from "@/components/DashboardStats";
 
 const DashboardPage = () => {
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
@@ -66,71 +60,7 @@ const DashboardPage = () => {
       </div>
 
       {/* Stats Grid */}
-      {/* <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-card border-border">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <div className="bg-primary/10 flex size-12 items-center justify-center rounded-lg">
-                <FileText className="text-primary size-6" />
-              </div>
-              <div>
-                <p className="text-foreground text-3xl font-bold">
-                  {stats.totalNotes}
-                </p>
-                <p className="text-muted-foreground text-sm">Total Notes</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-card border-border">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <div className="flex size-12 items-center justify-center rounded-lg bg-amber-500/10">
-                <Circle className="size-6 text-amber-500" />
-              </div>
-              <div>
-                <p className="text-foreground text-3xl font-bold">
-                  {stats.openNotes}
-                </p>
-                <p className="text-muted-foreground text-sm">Open Tickets</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-card border-border">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <div className="flex size-12 items-center justify-center rounded-lg bg-green-500/10">
-                <CheckCircle2 className="h-6 w-6 text-green-500" />
-              </div>
-              <div>
-                <p className="text-foreground text-3xl font-bold">
-                  {stats.completedNotes}
-                </p>
-                <p className="text-muted-foreground text-sm">Completed</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-card border-border">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg">
-                <Users className="text-primary size-6" />
-              </div>
-              <div>
-                <p className="text-foreground text-3xl font-bold">
-                  {stats.activeEmployees}
-                </p>
-                <p className="text-muted-foreground text-sm">Active Staff</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div> */}
+      <DashboardStats />
 
       {/* Quick Actions & Content Grid */}
     </div>
