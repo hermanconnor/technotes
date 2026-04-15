@@ -2,7 +2,7 @@ import { CheckCircle2, Circle, FileText, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import DashboardStatsSkeleton from "./DashboardStatsSkeleton";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
-import ErrorState from "./ErrorState";
+import ErrorState from "../ErrorState";
 
 const DashboardStats = () => {
   const { data: stats, isLoading, isError, refetch } = useDashboardStats();

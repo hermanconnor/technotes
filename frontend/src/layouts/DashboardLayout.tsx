@@ -1,5 +1,5 @@
 import { useLocation } from "react-router";
-import DashboardHeader from "@/components/DashboardHeader";
+import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import { Outlet } from "react-router";
 
 const DashboardLayout = () => {

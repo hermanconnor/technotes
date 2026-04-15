@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { CalendarDays, Clock } from "lucide-react";
 
-import DashboardStats from "@/components/DashboardStats";
+import DashboardStats from "@/components/dashboard/DashboardStats";
+import DashboardQuickActions from "@/components/dashboard/DashboardQuickActions";
 
 const DashboardPage = () => {
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
@@ -63,6 +64,7 @@ const DashboardPage = () => {
       <DashboardStats />
 
       {/* Quick Actions & Content Grid */}
+      <DashboardQuickActions />
     </div>
   );
 };
