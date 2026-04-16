@@ -4,11 +4,13 @@ import { CalendarDays, Clock } from "lucide-react";
 
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import DashboardQuickActions from "@/components/dashboard/DashboardQuickActions";
+import ManageTeam from "@/components/dashboard/ManageTeam";
 
 const DashboardPage = () => {
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
-  const { user: currentUsername, roles } = useAuthStore();
+  const { roles } = useAuthStore();
+  const isAdminOrManager = roles.includes("Admin") || roles.includes("Manager");
 
   useEffect(() => {
     setCurrentTime(new Date());
@@ -64,7 +66,10 @@ const DashboardPage = () => {
       <DashboardStats />
 
       {/* Quick Actions & Content Grid */}
-      <DashboardQuickActions />
+      <DashboardQuickActions isAdminOrManager={isAdminOrManager} />
+
+      {/* Team Section */}
+      {isAdminOrManager && <ManageTeam />}
     </div>
   );
 };

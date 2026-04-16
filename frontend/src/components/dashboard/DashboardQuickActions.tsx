@@ -20,7 +20,11 @@ import { useNotes } from "@/hooks/useNotes";
 import { RecentNotesSkeleton } from "./RecentNotesSkeleton";
 import ErrorState from "../ErrorState";
 
-const DashboardQuickActions = () => {
+interface Props {
+  isAdminOrManager: boolean;
+}
+
+const DashboardQuickActions = ({ isAdminOrManager }: Props) => {
   const { data, isLoading, isError, refetch } = useNotes({ limit: 5 });
   const recentNotes = data?.data ?? [];
 
@@ -50,17 +54,19 @@ const DashboardQuickActions = () => {
               <ArrowRight className="ml-auto size-4" />
             </Link>
           </Button>
-          <Button
-            asChild
-            variant="secondary"
-            className="w-full justify-start gap-3"
-          >
-            <Link to="/dashboard/employees">
-              <Users className="size-4" />
-              Manage Employees
-              <ArrowRight className="ml-auto size-4" />
-            </Link>
-          </Button>
+          {isAdminOrManager ? (
+            <Button
+              asChild
+              variant="secondary"
+              className="w-full justify-start gap-3"
+            >
+              <Link to="/dashboard/employees">
+                <Users className="size-4" />
+                Manage Employees
+                <ArrowRight className="ml-auto size-4" />
+              </Link>
+            </Button>
+          ) : null}
         </CardContent>
       </Card>
 

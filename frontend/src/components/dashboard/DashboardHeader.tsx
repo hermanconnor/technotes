@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router";
 import { Wrench, LogOut, ChevronDown } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -14,6 +13,7 @@ import {
 
 import { useAuthStore } from "@/store/useAuthStore";
 import { useLogout } from "@/hooks/useLogout";
+import { getInitials } from "@/utils";
 
 interface Props {
   currentPage: string;
@@ -24,12 +24,6 @@ const DashboardHeader = ({ currentPage }: Props) => {
   const logout = useLogout();
 
   const { user, roles = [] } = useAuthStore();
-
-  const getInitials = (name: string | null | undefined): string => {
-    if (!name || typeof name !== "string") return "U";
-
-    return name.trim().charAt(0).toUpperCase();
-  };
 
   const handleLogout = async () => {
     try {
