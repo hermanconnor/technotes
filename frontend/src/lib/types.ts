@@ -1,4 +1,5 @@
 export type UserRole = "Employee" | "Manager" | "Admin";
+export type StatusFilter = "all" | "open" | "completed";
 
 export interface LoginCredentials {
   username: string;
