@@ -72,7 +72,7 @@ const DashboardHeader = ({ currentPage }: Props) => {
                 size="sm"
                 className="hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
               >
-                <Link to="/notes">Notes</Link>
+                <Link to="/dashboard/notes">Notes</Link>
               </Button>
 
               {/* Conditional Rendering based on Roles */}

@@ -6,6 +6,7 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import DashboardPage from "./pages/DashboardPage";
 import PersistLogin from "./components/PersistLogin";
 import RequireAuth from "./components/RequireAuth";
+import NotesPage from "./pages/NotesPage";
 
 function App() {
   return (
@@ -22,6 +23,10 @@ function App() {
           >
             <Route path="dashboard" element={<DashboardLayout />}>
               <Route index element={<DashboardPage />} />
+
+              <Route path="notes">
+                <Route index element={<NotesPage />} />
+              </Route>
             </Route>
           </Route>
         </Route>

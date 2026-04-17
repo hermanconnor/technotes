@@ -3,12 +3,16 @@ import { AxiosError } from "axios";
 import { jwtDecode } from "jwt-decode";
 import { axiosPublic } from "@/api/axios";
 import { useAuthStore } from "@/store/useAuthStore";
-import type {
-  ApiErrorResponse,
-  DecodedAccessToken,
-  LoginCredentials,
-  LoginResponse,
-} from "@/lib/types";
+import type { ApiErrorResponse, DecodedAccessToken } from "@/lib/types";
+
+export interface LoginCredentials {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  accessToken: string;
+}
 
 export const useLogin = () => {
   const setAuth = useAuthStore((state) => state.setAuth);

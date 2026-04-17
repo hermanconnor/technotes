@@ -1,16 +1,6 @@
 export type UserRole = "Employee" | "Manager" | "Admin";
 export type StatusFilter = "all" | "open" | "completed";
 
-export interface LoginCredentials {
-  username: string;
-  password: string;
-  persist: boolean;
-}
-
-export interface LoginResponse {
-  accessToken: string;
-}
-
 export interface DecodedAccessToken {
   userInfo: {
     id: string;

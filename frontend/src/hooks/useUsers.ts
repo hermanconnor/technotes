@@ -2,7 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useAxiosPrivate } from "./useAxiosPrivate";
 import type { User } from "@/lib/types";
 
-export const useUsers = () => {
+interface UseUsersOptions {
+  enabled?: boolean;
+}
+
+export const useUsers = (options?: UseUsersOptions) => {
   const axiosPrivate = useAxiosPrivate();
 
   return useQuery<User[]>({
@@ -11,7 +15,8 @@ export const useUsers = () => {
       const response = await axiosPrivate.get("/users");
       return response.data;
     },
-    // Only fetch if the user is authorized (optional safety check)
+
+    ...options,
     retry: 1,
   });
 };

@@ -3,14 +3,30 @@ import { useState } from "react";
 import NotesStatsCards from "./NotesStatsCards";
 import NotesFilters from "./NotesFilters";
 import ErrorState from "@/components/ErrorState";
-import { useNotes } from "@/hooks/useNotes";
+import AddNoteDialog from "./AddNoteDialog";
 
+import { useCreateNote } from "@/hooks/useCreateNote";
+import { useNotes } from "@/hooks/useNotes";
+import { useUsers } from "@/hooks/useUsers";
+import { useAuthStore } from "@/store/useAuthStore";
 import type { StatusFilter } from "@/lib/types";
 
 const NotesList = () => {
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
   const [status, setStatus] = useState<StatusFilter>("all");
+
+  const { roles } = useAuthStore();
+
+  const isManagerOrAdmin = roles.some((role) =>
+    ["Manager", "Admin"].includes(role),
+  );
+
+  const { data: users } = useUsers({
+    enabled: isManagerOrAdmin,
+  });
+
+  const { mutate: createNote, isPending } = useCreateNote();
 
   const {
     data: response,
@@ -49,7 +65,11 @@ const NotesList = () => {
               Track and manage repair tickets and service notes.
             </p>
           </div>
-          {/* ADD NOTE DIALOG */}
+          <AddNoteDialog
+            employees={users ?? []}
+            onAdd={(data) => createNote(data)}
+            isLoading={isPending}
+          />
         </div>
 
         {/* Stats Cards */}
