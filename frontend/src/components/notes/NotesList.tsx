@@ -10,6 +10,7 @@ import { useNotes } from "@/hooks/useNotes";
 import { useUsers } from "@/hooks/useUsers";
 import { useAuthStore } from "@/store/useAuthStore";
 import type { StatusFilter } from "@/lib/types";
+import NotesTable from "./NotesTable";
 
 const NotesList = () => {
   const [page, setPage] = useState<number>(1);
@@ -88,6 +89,7 @@ const NotesList = () => {
         />
 
         {/* Table */}
+        <NotesTable notes={notes} users={users} isLoading={isLoading} />
 
         {/* Pagination */}
       </div>
