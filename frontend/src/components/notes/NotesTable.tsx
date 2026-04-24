@@ -1,6 +1,4 @@
-import { Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -9,8 +7,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Note, User } from "@/lib/types";
+import EditNoteDialog from "./EditNoteDialog";
 import { formatDate } from "@/utils";
+import type { Note, User } from "@/lib/types";
 
 interface Props {
   notes: Note[];
@@ -81,18 +80,7 @@ const NotesTable = ({ notes, users, isLoading }: Props) => {
                   {note.username}
                 </TableCell>
                 <TableCell className="text-right">
-                  <EditNoteDialog
-                    note={note}
-                    employees={users ?? []}
-                    onSave={handleSaveNote}
-                    onDelete={handleDeleteNote}
-                    trigger={
-                      <Button variant="ghost" size="icon" className="size-8">
-                        <Pencil className="size-4" />
-                        <span className="sr-only">Edit note</span>
-                      </Button>
-                    }
-                  />
+                  <EditNoteDialog note={note} employees={users ?? []} />
                 </TableCell>
               </TableRow>
             ))
