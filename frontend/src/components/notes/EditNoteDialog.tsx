@@ -46,6 +46,7 @@ import {
 import { useAuthStore } from "@/store/useAuthStore";
 import type { Note, User } from "@/lib/types";
 import { useUpdateNote } from "@/hooks/useUpdateNote";
+import { useDeleteNote } from "@/hooks/useDeleteNote";
 import { formatDate } from "@/utils";
 
 interface Props {
@@ -57,11 +58,14 @@ const EditNoteDialog = ({ note, employees }: Props) => {
   const [open, setOpen] = useState<boolean>(false);
 
   const { mutate: updateNote, isPending } = useUpdateNote();
+  const { mutate: deleteNote, isPending: isDeleting } = useDeleteNote();
   const { roles } = useAuthStore();
 
   const isManagerOrAdmin = roles.some((role) =>
     ["Manager", "Admin"].includes(role),
   );
+
+  const isBusy = isPending || isDeleting;
 
   const form = useForm<UpdateNoteFields>({
     resolver: zodResolver(updateNoteSchema),
@@ -81,7 +85,22 @@ const EditNoteDialog = ({ note, employees }: Props) => {
   };
 
   const onSubmit = (data: UpdateNoteFields) => {
-    updateNote({ ...data, id: note._id });
+    updateNote(
+      { ...data, id: note._id },
+      {
+        onSuccess: () => {
+          setOpen(false);
+        },
+      },
+    );
+  };
+
+  const handleDelete = () => {
+    deleteNote(note._id, {
+      onSuccess: () => {
+        setOpen(false);
+      },
+    });
   };
 
   return (
@@ -126,7 +145,7 @@ const EditNoteDialog = ({ note, employees }: Props) => {
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                    disabled={isPending}
+                    disabled={isBusy}
                   />
                 </div>
               )}
@@ -139,7 +158,7 @@ const EditNoteDialog = ({ note, employees }: Props) => {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Title</FieldLabel>
-                  <Input {...field} disabled={isPending} />
+                  <Input {...field} disabled={isBusy} />
                   <FieldError errors={[fieldState.error]} />
                 </Field>
               )}
@@ -152,11 +171,7 @@ const EditNoteDialog = ({ note, employees }: Props) => {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Note Content</FieldLabel>
-                  <Textarea
-                    {...field}
-                    className="min-h-30"
-                    disabled={isPending}
-                  />
+                  <Textarea {...field} className="min-h-30" disabled={isBusy} />
                   <FieldError errors={[fieldState.error]} />
                 </Field>
               )}
@@ -173,7 +188,7 @@ const EditNoteDialog = ({ note, employees }: Props) => {
                     <Select
                       onValueChange={field.onChange}
                       value={field.value}
-                      disabled={isPending}
+                      disabled={isBusy}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -212,6 +227,7 @@ const EditNoteDialog = ({ note, employees }: Props) => {
                   type="button"
                   variant="destructive"
                   className="w-full sm:mr-auto sm:w-auto"
+                  disabled={isBusy}
                 >
                   <Trash2 className="mr-2 size-4" />
                   Delete Note
@@ -225,10 +241,13 @@ const EditNoteDialog = ({ note, employees }: Props) => {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel disabled={isBusy}>
+                    Cancel
+                  </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleDelete}
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    disabled={isBusy}
                   >
                     Delete
                   </AlertDialogAction>
@@ -241,10 +260,15 @@ const EditNoteDialog = ({ note, employees }: Props) => {
                 variant="outline"
                 className="flex-1 sm:flex-none"
                 onClick={() => handleOpenChange(false)}
+                disabled={isBusy}
               >
                 Cancel
               </Button>
-              <Button type="submit" className="flex-1 sm:flex-none">
+              <Button
+                type="submit"
+                className="flex-1 sm:flex-none"
+                disabled={isBusy}
+              >
                 Save Changes
               </Button>
             </div>
