@@ -11,6 +11,7 @@ import { useUsers } from "@/hooks/useUsers";
 import { useAuthStore } from "@/store/useAuthStore";
 import type { StatusFilter } from "@/lib/types";
 import NotesTable from "./NotesTable";
+import TablePagination from "./TablePagination";
 
 const NotesList = () => {
   const [page, setPage] = useState<number>(1);
@@ -92,6 +93,12 @@ const NotesList = () => {
         <NotesTable notes={notes} users={users} isLoading={isLoading} />
 
         {/* Pagination */}
+        <TablePagination
+          metadata={metadata}
+          onPageChange={setPage}
+          isFetching={isFetching}
+          unit="notes"
+        />
       </div>
     </section>
   );

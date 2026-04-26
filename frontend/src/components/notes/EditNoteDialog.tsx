@@ -146,6 +146,7 @@ const EditNoteDialog = ({ note, employees }: Props) => {
                     checked={field.value}
                     onCheckedChange={field.onChange}
                     disabled={isBusy}
+                    className="cursor-pointer"
                   />
                 </div>
               )}
@@ -226,7 +227,7 @@ const EditNoteDialog = ({ note, employees }: Props) => {
                 <Button
                   type="button"
                   variant="destructive"
-                  className="w-full sm:mr-auto sm:w-auto"
+                  className="w-full cursor-pointer sm:mr-auto sm:w-auto"
                   disabled={isBusy}
                 >
                   <Trash2 className="mr-2 size-4" />
@@ -258,7 +259,7 @@ const EditNoteDialog = ({ note, employees }: Props) => {
               <Button
                 type="button"
                 variant="outline"
-                className="flex-1 sm:flex-none"
+                className="flex-1 cursor-pointer sm:flex-none"
                 onClick={() => handleOpenChange(false)}
                 disabled={isBusy}
               >
@@ -266,7 +267,7 @@ const EditNoteDialog = ({ note, employees }: Props) => {
               </Button>
               <Button
                 type="submit"
-                className="flex-1 sm:flex-none"
+                className="flex-1 cursor-pointer sm:flex-none"
                 disabled={isBusy}
               >
                 Save Changes
