@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FileText, Trash2, Pencil } from "lucide-react";
+import { FileText, Trash2, Pencil, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -70,7 +70,7 @@ const EditNoteDialog = ({ note, employees }: Props) => {
   const form = useForm<UpdateNoteFields>({
     resolver: zodResolver(updateNoteSchema),
     values: {
-      user: note.user,
+      user: note._id,
       title: note.title,
       text: note.text,
       completed: note.completed,
@@ -270,7 +270,8 @@ const EditNoteDialog = ({ note, employees }: Props) => {
                 className="flex-1 cursor-pointer sm:flex-none"
                 disabled={isBusy}
               >
-                Save Changes
+                {isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
+                {isPending ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </DialogFooter>

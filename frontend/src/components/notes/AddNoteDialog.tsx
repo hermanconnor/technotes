@@ -44,7 +44,7 @@ interface Props {
 const AddNoteDialog = ({ employees, onAdd, isLoading }: Props) => {
   const [open, setOpen] = useState<boolean>(false);
 
-  const { user, roles } = useAuthStore();
+  const { id, roles } = useAuthStore();
 
   const isManagerOrAdmin = roles.some((role) =>
     ["Manager", "Admin"].includes(role),
@@ -55,7 +55,7 @@ const AddNoteDialog = ({ employees, onAdd, isLoading }: Props) => {
     defaultValues: {
       title: "",
       text: "",
-      user: isManagerOrAdmin ? "" : (user ?? ""),
+      user: isManagerOrAdmin ? "" : (id ?? ""),
     },
   });
 

@@ -37,6 +37,7 @@ export const useLogin = () => {
       const decoded = jwtDecode<DecodedAccessToken>(accessToken);
 
       setAuth({
+        id: decoded.userInfo.id,
         user: decoded.userInfo.username,
         roles: decoded.userInfo.roles,
         accessToken,
