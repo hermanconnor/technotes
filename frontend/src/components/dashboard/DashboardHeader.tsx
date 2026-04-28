@@ -83,7 +83,7 @@ const DashboardHeader = ({ currentPage }: Props) => {
                   size="sm"
                   className="hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
                 >
-                  <Link to="/users">Employees</Link>
+                  <Link to="/dashboard/employees">Employees</Link>
                 </Button>
               )}
             </nav>

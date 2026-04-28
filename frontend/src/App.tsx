@@ -7,6 +7,7 @@ import DashboardPage from "./pages/DashboardPage";
 import PersistLogin from "./components/PersistLogin";
 import RequireAuth from "./components/RequireAuth";
 import NotesPage from "./pages/NotesPage";
+import EmployeesPage from "./pages/EmployeesPage";
 
 function App() {
   return (
@@ -26,6 +27,14 @@ function App() {
 
               <Route path="notes">
                 <Route index element={<NotesPage />} />
+              </Route>
+
+              <Route
+                element={<RequireAuth allowedRoles={["Admin", "Manager"]} />}
+              >
+                <Route path="employees">
+                  <Route index element={<EmployeesPage />} />
+                </Route>
               </Route>
             </Route>
           </Route>

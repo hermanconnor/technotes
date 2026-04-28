@@ -19,7 +19,7 @@ const RequireAuth = ({ allowedRoles }: Props) => {
   const hasAccess = roles.some((role) => allowedRoles.includes(role));
 
   if (!hasAccess) {
-    return <Navigate to="/unauthorized" state={{ from: location }} replace />;
+    return <Navigate to="/dashboard" state={{ from: location }} replace />;
   }
 
   // 3. Logged in and correct role? Let them in!

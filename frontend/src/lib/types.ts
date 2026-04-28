@@ -52,5 +52,7 @@ export interface DashboardStats {
   totalNotes: number;
   openNotes: number;
   completedNotes: number;
+  totalEmployees: number;
+  inactiveEmployees: number;
   activeEmployees: number;
 }
