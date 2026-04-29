@@ -10,3 +10,17 @@ export function formatDate(dateString: string): string {
     day: "numeric",
   });
 }
+
+export function getRoleBadgeVariant(
+  role: string,
+): "default" | "secondary" | "outline" {
+  switch (role) {
+    case "Manager":
+    case "Admin":
+      return "default";
+    case "Employee":
+      return "secondary";
+    default:
+      return "outline";
+  }
+}

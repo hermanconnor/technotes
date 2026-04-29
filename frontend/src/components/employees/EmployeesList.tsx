@@ -1,4 +1,5 @@
 import EmployeesStatsCards from "./EmployeesStatsCards";
+import EmployeesTable from "./EmployeesTable";
 
 const EmployeesList = () => {
   return (
@@ -12,18 +13,15 @@ const EmployeesList = () => {
               Manage your team members and their account permissions.
             </p>
           </div>
-          {/* ADD EMPLOYEE DIALOG */}
+          {/* TODO: ADD EMPLOYEE DIALOG */}
         </div>
-
         {/* Stats Cards */}
         <EmployeesStatsCards />
       </div>
-
       {/* Filters */}
-
       <div className="bg-card border-border rounded-lg border">
         {/* Table */}
-
+        <EmployeesTable />
         {/* Pagination */}
       </div>
     </section>
