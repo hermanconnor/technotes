@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { useUsers } from "@/hooks/useUsers";
 import { getInitials, getRoleBadgeVariant } from "@/utils";
+import EditEmployeeDialog from "./EditEmployeeDialog";
 
 const EmployeesTable = () => {
   const { data: employees, isLoading } = useUsers();
@@ -93,7 +94,8 @@ const EmployeesTable = () => {
                   )}
                 </TableCell>
                 <TableCell className="text-right">
-                  {/* TODO: EDIT EMPLOYEE DIALOG */}
+                  {/* EDIT EMPLOYEE DIALOG */}
+                  <EditEmployeeDialog employee={employee} />
                 </TableCell>
               </TableRow>
             ))

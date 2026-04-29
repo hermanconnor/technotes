@@ -18,7 +18,7 @@ export interface ApiErrorResponse {
 export interface User {
   _id: string;
   username: string;
-  roles: string[];
+  roles: UserRole[];
   active: boolean;
 }
 
