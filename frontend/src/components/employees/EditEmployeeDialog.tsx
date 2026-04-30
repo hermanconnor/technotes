@@ -37,6 +37,7 @@ import { useUpdateUser } from "@/hooks/useUpdateUser";
 import { useDeleteUser } from "@/hooks/useDeleteUser";
 import { editUserSchema, type EditUserFields } from "@/validation/userSchema";
 import type { User, UserRole } from "@/lib/types";
+import { ROLES } from "@/lib/constants";
 
 interface Props {
   employee: User;
@@ -84,7 +85,7 @@ const EditEmployeeDialog = ({ employee }: Props) => {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="size-8">
+        <Button variant="ghost" size="icon" className="size-8 cursor-pointer">
           <Pencil className="size-4" />
           <span className="sr-only">Edit employee</span>
         </Button>
@@ -106,8 +107,8 @@ const EditEmployeeDialog = ({ employee }: Props) => {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>Title</FieldLabel>
-                  <Input {...field} disabled={isBusy} />
+                  <FieldLabel htmlFor="title">Title</FieldLabel>
+                  <Input id="title" {...field} disabled={isBusy} />
                   <FieldError errors={[fieldState.error]} />
                 </Field>
               )}
@@ -119,9 +120,12 @@ const EditEmployeeDialog = ({ employee }: Props) => {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>New Password (Optional)</FieldLabel>
+                  <FieldLabel htmlFor="new-password">
+                    New Password (Optional)
+                  </FieldLabel>
                   <div className="relative">
                     <Input
+                      id="new-password"
                       {...field}
                       type={showPassword ? "text" : "password"}
                       disabled={isBusy}
@@ -194,7 +198,7 @@ const EditEmployeeDialog = ({ employee }: Props) => {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    {["Employee", "Manager", "Admin"].map((role) => (
+                    {ROLES.map((role) => (
                       <div key={role} className="flex items-center space-x-2">
                         <Checkbox
                           id={`role-${role}`}
@@ -232,7 +236,7 @@ const EditEmployeeDialog = ({ employee }: Props) => {
                 <Button
                   type="button"
                   variant="destructive"
-                  className="sm:mr-auto"
+                  className="cursor-pointer sm:mr-auto"
                   disabled={isBusy}
                 >
                   Delete User
@@ -247,13 +251,15 @@ const EditEmployeeDialog = ({ employee }: Props) => {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel className="cursor-pointer">
+                    Cancel
+                  </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleDelete}
-                    className="bg-destructive hover:bg-destructive/90"
+                    className="bg-destructive hover:bg-destructive/90 cursor-pointer"
                   >
                     {isDeleting ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="size-4 animate-spin" />
                     ) : (
                       "Delete"
                     )}
@@ -266,12 +272,17 @@ const EditEmployeeDialog = ({ employee }: Props) => {
               <Button
                 type="button"
                 variant="outline"
+                className="cursor-pointer"
                 onClick={() => setOpen(false)}
                 disabled={isBusy}
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isBusy}>
+              <Button
+                type="submit"
+                disabled={isBusy}
+                className="cursor-pointer"
+              >
                 {isUpdating && <Loader2 className="mr-2 size-4 animate-spin" />}
                 Save Changes
               </Button>

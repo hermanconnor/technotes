@@ -1,3 +1,4 @@
+import AddEmployeeDialog from "./AddEmployeeDialog";
 import EmployeesStatsCards from "./EmployeesStatsCards";
 import EmployeesTable from "./EmployeesTable";
 
@@ -13,7 +14,8 @@ const EmployeesList = () => {
               Manage your team members and their account permissions.
             </p>
           </div>
-          {/* TODO: ADD EMPLOYEE DIALOG */}
+          {/* ADD EMPLOYEE DIALOG */}
+          <AddEmployeeDialog />
         </div>
         {/* Stats Cards */}
         <EmployeesStatsCards />

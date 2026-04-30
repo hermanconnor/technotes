@@ -106,7 +106,7 @@ const EditNoteDialog = ({ note, employees }: Props) => {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="size-8">
+        <Button variant="ghost" size="icon" className="size-8 cursor-pointer">
           <Pencil className="size-4" />
           <span className="sr-only">Edit note</span>
         </Button>
@@ -242,12 +242,15 @@ const EditNoteDialog = ({ note, employees }: Props) => {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel disabled={isBusy}>
+                  <AlertDialogCancel
+                    disabled={isBusy}
+                    className="cursor-pointer"
+                  >
                     Cancel
                   </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleDelete}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90 cursor-pointer"
                     disabled={isBusy}
                   >
                     Delete
