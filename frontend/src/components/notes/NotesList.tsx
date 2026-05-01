@@ -12,11 +12,14 @@ import { useAuthStore } from "@/store/useAuthStore";
 import type { StatusFilter } from "@/lib/types";
 import NotesTable from "./NotesTable";
 import TablePagination from "../TablePagination";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const NotesList = () => {
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
   const [status, setStatus] = useState<StatusFilter>("all");
+
+  const debouncedSearch = useDebounce(search, 500);
 
   const { roles } = useAuthStore();
 
@@ -39,7 +42,7 @@ const NotesList = () => {
   } = useNotes({
     page,
     limit: 10,
-    search: search || undefined,
+    search: debouncedSearch || undefined,
     completed: status === "all" ? undefined : status === "completed",
   });
 
