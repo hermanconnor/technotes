@@ -8,6 +8,7 @@ import PersistLogin from "./components/PersistLogin";
 import RequireAuth from "./components/RequireAuth";
 import NotesPage from "./pages/NotesPage";
 import EmployeesPage from "./pages/EmployeesPage";
+import NotFound from "./components/NotFound";
 
 function App() {
   return (
@@ -39,6 +40,8 @@ function App() {
             </Route>
           </Route>
         </Route>
+
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );
