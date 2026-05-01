@@ -22,14 +22,19 @@ export interface User {
   active: boolean;
 }
 
+interface UserReference {
+  _id: string;
+  username: string;
+}
+
 export interface Note {
   _id: string;
-  user: string;
-  username?: string;
   title: string;
   text: string;
-  completed: boolean;
   ticket: number;
+  completed: boolean;
+  username: string;
+  user: UserReference;
   createdAt: string;
   updatedAt: string;
 }

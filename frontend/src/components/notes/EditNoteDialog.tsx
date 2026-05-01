@@ -70,7 +70,7 @@ const EditNoteDialog = ({ note, employees }: Props) => {
   const form = useForm<UpdateNoteFields>({
     resolver: zodResolver(updateNoteSchema),
     values: {
-      user: note._id,
+      user: note.user._id,
       title: note.title,
       text: note.text,
       completed: note.completed,
