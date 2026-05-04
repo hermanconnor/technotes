@@ -36,6 +36,8 @@ export const useLogin = () => {
       const { accessToken } = data;
       const decoded = jwtDecode<DecodedAccessToken>(accessToken);
 
+      localStorage.setItem("persist", "true");
+
       setAuth({
         id: decoded.userInfo.id,
         user: decoded.userInfo.username,
