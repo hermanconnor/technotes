@@ -30,16 +30,6 @@ const TablePagination = ({
 
   return (
     <div className="border-border flex items-center justify-between border-t p-4">
-      {/* <div className="hidden sm:block">
-        <p className="text-muted-foreground text-sm">
-          Showing{" "}
-          <span className="text-foreground font-medium">{metadata?.page}</span>{" "}
-          of{" "}
-          <span className="text-foreground font-medium">{metadata?.total}</span>{" "}
-          {unit}
-        </p>
-      </div> */}
-
       <div className="hidden sm:block">
         <p className="text-muted-foreground text-sm">
           Showing <span className="text-foreground font-medium">{start}</span>{" "}

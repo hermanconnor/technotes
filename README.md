@@ -127,6 +127,16 @@ npm run dev
 - The UI dynamically adjusts by checking the `roles` array in the global Auth state.
 - For security, I enforced **Server-Side Validation**: even if a user bypasses the UI and attempts a DELETE request via the API, the backend middleware verifies their role before executing the command.
 
+### 4. Production-Ready Resource Optimization (The 500kb Bundle Warning)
+
+**The Challenge:** When running the production build via Vite, the compiler threw performance warnings indicating that the single-page application (SPA) JavaScript bundle exceeded 500kb. Serving one monolithic file meant users on slower mobile networks would experience long initial load times, downloading dashboard code they couldn't even see yet. Concurrently, the backend log management system was writing errors locally to a `logs/` directory, which would be wiped out upon every deployment due to Render's ephemeral cloud file system.
+
+**The Solution:** I refactored both layers to transition the architecture from a "monolithic local setup" to a cloud-optimized ecosystem:
+
+- **Route-Based Code Splitting:** I refactored the React router using `React.lazy()` and `<Suspense>` to separate the code by page. Now, heavy pages like `DashboardPage`, `NotesPage`, and `EmployeesPage` are split into isolated, on-demand JavaScript chunks loaded only when the user navigates to them.
+- **Vite Dependency Splitting:** I updated `vite.config.js` to utilize Rollup's `manualChunks` hook, effectively decoupling massive third-party `node_modules` from the core application source code.
+- **Stream-Based Logging for Cloud Architecture:** I updated the Winston backend logger to respect the environment state (`NODE_ENV`). While it still writes to safe local files (`process.cwd()`) in development, in production it shifts entirely to standard output streams (`stdout/stderr`). This allows cloud platforms like Render to seamlessly aggregate logs into an external dashboard without risking data loss on ephemeral servers.
+
 ---
 
 ## 🗺️ Future Improvements
