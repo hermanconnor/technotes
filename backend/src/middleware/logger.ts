@@ -4,36 +4,41 @@ import { env } from '../config/env.js';
 
 const { combine, timestamp, printf, colorize, errors } = winston.format;
 
-// 1. Define custom log format
 const logFormat = printf(({ level, message, timestamp, stack }) => {
   return `${timestamp} ${level}: ${stack || message}`;
 });
 
+// Base configuration (Formats apply to everything)
 export const logger = winston.createLogger({
-  level: 'info',
+  level: env.NODE_ENV === 'production' ? 'info' : 'debug',
   format: combine(
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     errors({ stack: true }),
     logFormat,
   ),
   transports: [
-    // 2. Log errors to a specific file
-    new winston.transports.File({
-      filename: path.join('logs', 'error.log'),
-      level: 'error',
-    }),
-    // 3. Log all info/warnings/errors to a combined file
-    new winston.transports.File({
-      filename: path.join('logs', 'combined.log'),
+    // ALWAYS log to the console.
+    // Render will capture this automatically in production.
+    new winston.transports.Console({
+      format:
+        env.NODE_ENV === 'production'
+          ? logFormat // Clean text for production log aggregators
+          : combine(colorize(), logFormat), // Colorful text for local dev
     }),
   ],
 });
 
-// 4. If we're not in production, log to the console with colors
+// ONLY log to files if we are running locally in development
 if (env.NODE_ENV !== 'production') {
   logger.add(
-    new winston.transports.Console({
-      format: combine(colorize(), logFormat),
+    new winston.transports.File({
+      filename: path.join(process.cwd(), 'logs', 'error.log'),
+      level: 'error',
+    }),
+  );
+  logger.add(
+    new winston.transports.File({
+      filename: path.join(process.cwd(), 'logs', 'combined.log'),
     }),
   );
 }
