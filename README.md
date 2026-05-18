@@ -8,6 +8,16 @@ This digital transformation provides a centralized dashboard with **Role-Based A
 
 ---
 
+### 📸 Application Preview
+
+<img src="images/home.webp"  alt="Home Page">
+
+|                   **Tech Dashboard**                    |                  **Notes Management**                   |
+| :-----------------------------------------------------: | :-----------------------------------------------------: |
+| <img src="images/dashboard.webp"  alt="Dashboard Page"> |     <img src="images/notes.webp" alt="Notes Page">      |
+|                      **Add Note**                       |                 **Employee Management**                 |
+| <img src="images/add-note.webp"  alt="Dashboard View">  | <img src="images/employees.webp"  alt="Employees View"> |
+
 ### **🚀 Key Features**
 
 - **Secure Authentication:** Implemented JWT-based authentication with silent refresh tokens and HTTP-only cookies for maximum security.
