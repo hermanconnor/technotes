@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && tsc",
-    "start": "npm run build && node ./dist/server.js",
+    "start": "node ./dist/server.js",
     "dev": "tsx watch ./src/server.ts"
   },
   "keywords": [],
