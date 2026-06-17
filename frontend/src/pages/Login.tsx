@@ -33,17 +33,33 @@ const Login = () => {
     },
   });
 
+  const handleLoginSuccess = () => {
+    toast.success("Welcome back!", { description: "Logging you in..." });
+    navigate(from, { replace: true });
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleLoginError = (error: any) => {
+    const message = error.response?.data?.message || "Invalid credentials";
+    toast.error("Authentication Failed", { description: message });
+  };
+
   const onSubmit = (data: LoginFormValues) => {
     login(data, {
-      onSuccess: () => {
-        toast.success("Welcome back!", { description: "Logging you in..." });
-        navigate(from, { replace: true });
-      },
+      onSuccess: handleLoginSuccess,
+      onError: handleLoginError,
+    });
+  };
 
-      onError: (error) => {
-        const message = error.response?.data?.message || "Invalid credentials";
-        toast.error("Authentication Failed", { description: message });
-      },
+  const handleDemoLogin = () => {
+    const demoCredentials: LoginFormValues = {
+      username: "Demo",
+      password: "MySuperSecretPassword123",
+    };
+
+    login(demoCredentials, {
+      onSuccess: handleLoginSuccess,
+      onError: handleLoginError,
     });
   };
 
@@ -162,17 +178,30 @@ const Login = () => {
                 )}
               />
 
-              <Button
-                type="submit"
-                size="lg"
-                className="w-full cursor-pointer"
-                disabled={isPending}
-              >
-                {isPending ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : null}
-                {isPending ? "Signing In..." : "Sign In"}
-              </Button>
+              <div className="space-y-3">
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full cursor-pointer"
+                  disabled={isPending}
+                >
+                  {isPending ? (
+                    <Loader2 className="mr-2 size-4 animate-spin" />
+                  ) : null}
+                  {isPending ? "Signing In..." : "Sign In"}
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="lg"
+                  className="w-full cursor-pointer"
+                  disabled={isPending}
+                  onClick={handleDemoLogin}
+                >
+                  {isPending ? "Please wait..." : "Sign in as Guest / Demo"}
+                </Button>
+              </div>
             </FieldGroup>
           </form>
 
