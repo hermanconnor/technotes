@@ -5,83 +5,110 @@ import { ApiError, type ValidationErrorDetail } from '../utils/ApiError.js';
 import { logger } from './logger.js';
 import { env } from '../config/env.js';
 
-interface MongoError extends Error {
-  code?: number;
-  keyPattern?: Record<string, any>;
+interface ErrorResponse {
+  success: boolean;
+  message: string;
+  details?: ValidationErrorDetail[];
+  stack?: string;
 }
 
 export const globalErrorHandler = (
-  err: Error | ApiError,
+  err: unknown,
   req: Request,
   res: Response,
-  next: NextFunction,
+  _next: NextFunction,
 ) => {
-  let error = err;
+  let normalizedError: ApiError;
+
+  const isProduction = env.NODE_ENV === 'production';
 
   // 1. Mongoose/MongoDB Duplicate Key (11000)
-  const mongoErr = err as MongoError;
-
-  if (mongoErr.code === 11000) {
+  if (err && typeof err === 'object' && 'code' in err && err.code === 11000) {
+    const mongoErr = err as { keyPattern?: Record<string, unknown> };
     const keys = Object.keys(mongoErr.keyPattern || {});
     const field = keys[0] || 'Field';
+    const formattedField = field.charAt(0).toUpperCase() + field.slice(1);
 
-    error = ApiError.conflict(
-      `${field.charAt(0).toUpperCase() + field.slice(1)} already exists`,
-    );
+    normalizedError = ApiError.conflict(`${formattedField} already exists`);
   }
 
   // 2. Mongoose Validation Error
   else if (err instanceof mongoose.Error.ValidationError) {
     const details: ValidationErrorDetail[] = Object.values(err.errors).map(
-      (e: any) => ({
+      (e) => ({
         field: e.path,
         message: e.message,
       }),
     );
 
-    error = new ApiError(400, 'Data validation failed', true, details);
+    normalizedError = new ApiError(
+      400,
+      'Data validation failed',
+      true,
+      details,
+    );
   }
 
   // 3. Mongoose Cast Error
   else if (err instanceof mongoose.Error.CastError) {
-    error = new ApiError(400, 'Resource not found');
+    normalizedError = ApiError.notFound();
   }
 
   // 4. Zod Validation Error
   else if (err instanceof ZodError) {
-    const details = err.issues.map((issue) => ({
+    const details: ValidationErrorDetail[] = err.issues.map((issue) => ({
       field: issue.path.join('.'),
       message: issue.message,
     }));
 
-    error = new ApiError(400, 'Validation failed', true, details);
+    normalizedError = new ApiError(400, 'Validation failed', true, details);
+  }
+  // 5. Already formalized ApiError
+  else if (err instanceof ApiError) {
+    normalizedError = err;
   }
 
-  // 5. Final Normalization
-  // Use "in" operator or type casting to check for status codes on generic Errors
-  if (!(error instanceof ApiError)) {
-    const statusCode =
-      (error as any).statusCode || (error as any).status || 500;
-    const message = error.message || 'Internal server error';
+  // 6. Generic Native Error or unexpected values
+  else {
+    let statusCode = 500;
+    let message = 'Internal server error';
 
-    error = new ApiError(statusCode, message, false);
+    if (err && typeof err === 'object') {
+      if ('statusCode' in err && typeof err.statusCode === 'number') {
+        statusCode = err.statusCode;
+      } else if ('status' in err && typeof err.status === 'number') {
+        statusCode = err.status;
+      }
+
+      if ('message' in err && typeof err.message === 'string') {
+        message = err.message;
+      }
+    }
+
+    normalizedError = new ApiError(statusCode, message, false);
   }
 
-  // Cast back to ApiError for the response logic since we've guaranteed it above
-  const finalError = error as ApiError;
-
-  const responseBody = {
+  // Build response object
+  const responseBody: ErrorResponse = {
     success: false,
-    message: finalError.isOperational
-      ? finalError.message
+    message: normalizedError.isOperational
+      ? normalizedError.message
       : 'An unexpected error occurred',
-    ...(finalError.details && { details: finalError.details }),
-    ...(env.NODE_ENV === 'development' && { stack: err.stack }),
   };
 
-  if (env.NODE_ENV === 'development' || !finalError.isOperational) {
+  if (normalizedError.details) {
+    responseBody.details = normalizedError.details;
+  }
+
+  // Extract stack trace if it is safe and available
+  if (!isProduction && err instanceof Error && err.stack) {
+    responseBody.stack = err.stack;
+  }
+
+  // Log failures appropriately
+  if (!isProduction || !normalizedError.isOperational) {
     logger.error(`[ERROR] ${req.method} ${req.url}:`, err);
   }
 
-  res.status(finalError.statusCode).json(responseBody);
+  res.status(normalizedError.statusCode).json(responseBody);
 };

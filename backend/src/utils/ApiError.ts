@@ -19,8 +19,6 @@ export class ApiError extends Error {
     this.isOperational = isOperational;
     this.details = details;
 
-    // Set the prototype explicitly for extending built-in Error in TS
-    Object.setPrototypeOf(this, ApiError.prototype);
     Error.captureStackTrace(this, this.constructor);
   }
 
